@@ -1,0 +1,3 @@
+# Make sure that all users can write the K7637's LEDs.
+# This is important, so that k7637-beep and consequently xkbevd can run without root privilege.
+SUBSYSTEM=="leds", ATTRS{name}=="VEB Kombinat Robotron K7637", ACTION=="add", RUN+="/bin/chmod a+rw /sys%p/brightness"
