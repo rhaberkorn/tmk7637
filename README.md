@@ -17,7 +17,7 @@ while supporting most of its original features and many new features:
   which eases adapting the keyboard layout and allows you to edit the keymap without
   recompilation using the online [Keymap editor](http://www.tmk-kbd.com/tmk_keyboard/editor/unimap/).
 * All of the seven LEDs are supported in one way or another:
-  * The Caps Lock LED does what you expect.
+  * The Caps Lock LED (C99) does what you expect.
   * Three of the five LEDs in the first row (G00-G04) display the standard
     [Num Lock, Scroll Lock and Compose LED states](#LEDs).
   * One of the LEDs displays the keyclick mode.
@@ -37,6 +37,8 @@ while supporting most of its original features and many new features:
   * Emit a short beep on every keypress.
 
 ![A5120](https://upload.wikimedia.org/wikipedia/commons/d/d9/Robotron_A_5120_Bild_01.jpg)
+
+You can watch a [demo video here](https://drive.google.com/file/d/16d42nZZ2FOZdNt2Cqqwvp1CHxKFpkYBy/view?usp=sharing).
 
 ## Building the Replacement Controller
 
@@ -66,7 +68,7 @@ At least for the UB 880 D, all pin holes should be free of solder.
 Secondly, you should "neutralize" the following chips - it is sufficient
 to cut their power pins:
 
-* The EEPROM.
+* The EPROM.
 * __FIXME__
 
 Now, solder pin headers at least to the following pins on the backside of the
@@ -183,7 +185,7 @@ Writing a 0 disables the corresponding LED.
 ## Buzzer As System Beep
 
 It is assumed that the "kana" LED is not really used as a regular keyboard LED.
-On Linux, you can trigger the buzzer along with the fifth LED using the following command:
+On Linux, you can trigger the buzzer along with LED 6 (G53) using the following command:
 
     echo 1 | sudo tee /sys/class/leds/inputX\:\:kana/brightness
 
@@ -277,6 +279,6 @@ serial protocol is [well documented](docs/SerielleTastatur_K7637_XX_Betriebsdoku
 You merely need to add a current loop transceiver.
 My particular board was simply broken, so I gave up on this approach.
 The kbdbabel website was nevertheless invaluable for its [K7637 schematics](docs/kbdbabel_doc_robotron_k7637-50.pdf).
-It also contains an [EEPROM dump](http://kbdbabel.org/rom/robotron-k7637_50-2716.bin) that could be of use
+It also contains an [EPROM dump](http://kbdbabel.org/rom/robotron-k7637_50-2716.bin) that could be of use
 in restoring a K7637 board.
 You might also be interested in the [IFFS connector pinout](http://kbdbabel.org/conn/kbd_connector_k7637.png).
