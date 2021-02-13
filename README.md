@@ -165,11 +165,13 @@ keys are mapped.
 
 The standard USB lock lights are located as follows:
 
-| capslock   | LED next to the Caps Lock key (C99) |
-| numlock    | 1st LED on the top row (G00) |
-| scrolllock | 5th LED on the top row (G04) |
-| compose    | 3rd LED on the top row (G02) |
-| kana       | 6th LED on the top row (G53) - *this also triggers the buzzer* |
+Name       | Location
+---------- | --------
+capslock   | LED next to the Caps Lock key (C99)
+numlock    | 1st LED on the top row (G00)
+scrolllock | 5th LED on the top row (G04)
+compose    | 3rd LED on the top row (G02)
+kana       | 6th LED on the top row (G53) - *this also triggers the buzzer*
 
 On Linux, you can manually set these LEDs using the following command:
 
@@ -187,7 +189,7 @@ On Linux, you can trigger the buzzer along with the fifth LED using the followin
 
 Whereas *X* is a number.
 You can check which device it belongs to by consulting
-`/sys/class/leds/inputX\:\:capslock/device/name`.
+`/sys/class/leds/inputX\:\:Y/device/name`.
 
 There is also a script `k7637-beep.sh` for automatically finding the correct
 LED node and triggering it for a short while.
@@ -262,7 +264,7 @@ As an alternative to xkbevd, you might want to try [xbelld](https://gitlab.com/g
   This could be remedied by a very simple hardware hack:
   Cut either the row or the column trace and bridge it to some other unused position
   in the keyboard matrix.
-  This would require merely an entry in unimap_trans and UNIMAP_K7637().
+  This would require merely an entry in unimap_trans and `UNIMAP_K7637()`.
   Keyboards without this modification will also continue to work.
 
 ## See Also
