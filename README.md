@@ -106,7 +106,7 @@ but you could also find some other GND on the board and solder a cable to it.
 Now, solder wires *on the backside* of the PCBs to the following pins of the former
 8212 IO chip: 4, 6, 8, 10, 15, 17, 21
 
-![8212](docs/8212 Pinout.jpeg)
+![8212](docs/8212.jpg)
 
 These wires connect to the Teensy in the following order: __FIXME__
 
