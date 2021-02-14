@@ -191,7 +191,9 @@ static const struct song_note song_ruinen[] PROGMEM = {
 
 void song_play_ruinen(void)
 {
+    /* could be activated due to keyclick mode */
     keyclick_solenoid_set(false);
+    pwm_pb5_set_tone(0);
 
     uint8_t i = 0;
     for (long unsigned int cur_note = 0; cur_note < sizeof(song_ruinen)/sizeof(song_ruinen[0]); cur_note++) {
@@ -410,7 +412,9 @@ static void song_larsen_light(int16_t pos)
 
 void song_play_kitt(void)
 {
+    /* could be activated due to keyclick mode */
     keyclick_solenoid_set(false);
+    pwm_pb5_set_tone(0);
 
     int16_t i;
 
