@@ -89,53 +89,20 @@ uint8_t matrix_scan(void)
          */
         _delay_us(30);
 
-        uint8_t row = 0;
-
-        /*
-         * The first 4 bits in the 15th column
-         * are sensed like ordinary keypresses but
-         * in reality represent a 3-bit "security key"
-         * (cf. Betriebsdokumentation, p.13f) with
-         * an actual resolution of 6 encoded into a special
-         * keylike device that's plugged into the keyboard.
-         * It makes no sense to map these original bits into
-         * the keyboard matrix.
-         * Instead we translate it into one of six key presses
-         * via unused fields of the keyboard matrix whenever
-         * the "security" key is removed.
-         * These pseudo-keypress are mapped to F19-F24 in unimap_trans
-         * and could be mapped at the OS level, eg. to lock up the screen.
-         */
-        if (col+1 == MATRIX_COLS) {
-            static uint8_t last_security_key = 0;
-            uint8_t security_key = (!read_row(0) << 0) |
-                                   (!read_row(1) << 1) |
-                                   (!read_row(2) << 2);
-
-            for (uint8_t i = 0; i < 6; i++)
-                matrix_debouncing[i] &= ~(1 << col);
-            if (security_key != last_security_key && security_key == 0 &&
-                1 <= last_security_key && last_security_key <= 6)
-                matrix_debouncing[last_security_key-1] |= (1 << col);
-
-            last_security_key = security_key;
-            row = 6;
-        }
-
-        while (row < MATRIX_ROWS) {
+        for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
             matrix_row_t prev_row = matrix_debouncing[row];
 
             if (read_row(row)) {
                 matrix_debouncing[row] |= (1 << col);
-                matrix_debouncing_pressed_keys++;
+                /* the "security key" bits do not count into the pressed keys */
+                if (col < MATRIX_COLS-1 || row > 3)
+                    matrix_debouncing_pressed_keys++;
             } else {
                 matrix_debouncing[row] &= ~(1 << col);
             }
 
             if (matrix_debouncing[row] != prev_row)
                 debouncing_time = timer_read();
-
-            row++;
         }
 
         unselect_cols();
@@ -183,7 +150,61 @@ uint8_t matrix_scan(void)
         memcpy(matrix, matrix_debouncing, sizeof(matrix));
         matrix_pressed_keys = matrix_debouncing_pressed_keys;
 
+        /*
+         * The first 4 bits in the 15th column
+         * are sensed like ordinary keypresses but
+         * in reality represent a 3-bit "security key"
+         * (cf. Betriebsdokumentation, p.13f) with
+         * an actual resolution of 6 encoded into a special
+         * keylike device that's plugged into the keyboard.
+         * It makes no sense to map these original bits into
+         * the keyboard matrix.
+         * Instead we translate it into one of six key presses
+         * via unused fields of the keyboard matrix whenever
+         * the "security" key is removed.
+         * These pseudo-keypress are mapped to F19-F24 in unimap_trans
+         * and could be mapped at the OS level, eg. to lock up the screen.
+         * When removing the "security key", F18 is also pressed which
+         * will usually be mapped to a modifier but could also be left
+         * F18 and be used to lock up the screen, ignoring all the other
+         * pseudo-keys.
+         *
+         * FIXME: It would be more elegant to directly cause
+         * a key event to be generated, but this does not seem to be
+         * supported if we want to take the configurable keymap into account.
+         * Also, it might be more elegant to have all the pseudo-keys
+         * in a dedicated matrix row.
+         */
+        static uint8_t last_security_key = 0;
+        uint8_t security_key = (~(matrix[0] >> (MATRIX_COLS-1)) & (1 << 0)) |
+                               (~(matrix[1] >> (MATRIX_COLS-2)) & (1 << 1)) |
+                               (~(matrix[2] >> (MATRIX_COLS-3)) & (1 << 2));
+
+        for (uint8_t i = 0; i < 4; i++)
+            matrix[i] &= ~(1 << (MATRIX_COLS-1)); /* F19-F24 */
+
+        if (last_security_key == 0 && 1 <= security_key && security_key <= 6) {
+            dprintf("Security key %u inserted\n", security_key);
+            matrix[security_key-1] |= (1 << (MATRIX_COLS-1)); /* F19-F24 */
+        } else if (1 <= last_security_key && last_security_key <= 6 && security_key == 0) {
+            dprintf("Security key %u removed\n", last_security_key);
+            matrix[0] |= (1 << 13); /* F18 */
+            matrix[last_security_key-1] |= (1 << (MATRIX_COLS-1)); /* F19-F24 */
+        }
+
+        last_security_key = security_key;
+
         debouncing_time = 0;
+    } else {
+        /*
+         * Physically inserting or removing the "security key" should
+         * result in a keypress event immediately followed by a kreyrelease.
+         * We therefore clear the matrix slots reserved for it, so that
+         * the key press is reported only for one scan cycle.
+         */
+        matrix[0] &= ~(1 << 13); /* F18 */
+        for (uint8_t i = 0; i < 4; i++)
+            matrix[i] &= ~(1 << (MATRIX_COLS-1)); /* F19-F24 */
     }
 
     /*

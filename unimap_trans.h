@@ -23,14 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "unimap.h"
 
 #define UNIMAP_K7637( \
-    K29,K3A,K3B,K3C,K3D,K3E,K3F,K40,K41,K42,K43,K44,K45,K68,      K46,K47,K48,      K01,K02,K03,  K6E, \
-    K35,K1E,K1F,K20,K21,K22,K23,K24,K25,K26,K27,K2D,K2E,K2A,      K4A,K4C,      K53,K54,          K6F, \
-    K2B,K14,K1A,K08,K15,K17,K1C,K18,K0C,K12,K13,K2F,K30,          K4D,K4B,      K5F,K60,K61,K57,  K70, \
-    K39,K04,K16,K07,K09,K0A,K0B,K0D,K0E,K0F,K33,K34,K32,          K28,K4E,      K5C,K5D,K5E,K66,  K71, \
-    K79,K64,K1D,K1B,K06,K19,K05,K11,K10,K36,K37,K38,              K51,K52,      K59,K5A,K5B,K58,  K72, \
-    K78,    K7A,            K2C,                K7E,    K7C,      K50,K4F,      K62,K55,K63,K67,  K73  \
+    K29,K3A,K3B,K3C,K3D,K3E,K3F,K40,K41,K42,K43,K44,K45,K68,      K46,K47,K48,      K01,K02,K03,  K6D,K6E, \
+    K35,K1E,K1F,K20,K21,K22,K23,K24,K25,K26,K27,K2D,K2E,K2A,      K4A,K4C,      K53,K54,              K6F, \
+    K2B,K14,K1A,K08,K15,K17,K1C,K18,K0C,K12,K13,K2F,K30,          K4D,K4B,      K5F,K60,K61,K57,      K70, \
+    K39,K04,K16,K07,K09,K0A,K0B,K0D,K0E,K0F,K33,K34,K32,          K28,K4E,      K5C,K5D,K5E,K66,      K71, \
+    K79,K64,K1D,K1B,K06,K19,K05,K11,K10,K36,K37,K38,              K51,K52,      K59,K5A,K5B,K58,      K72, \
+    K78,    K7A,            K2C,                K7E,    K7C,      K50,K4F,      K62,K55,K63,K67,      K73  \
 ) UNIMAP( \
-            K68, NO, NO, NO, NO, NO,K6E,K6F,K70,K71,K72,K73,                                     \
+            K68, NO, NO, NO, NO,K6D,K6E,K6F,K70,K71,K72,K73,                                     \
     K29,    K3A,K3B,K3C,K3D,K3E,K3F,K40,K41,K42,K43,K44,K45,      K46,K47,K48,      K01,K02,K03, \
     K35,K1E,K1F,K20,K21,K22,K23,K24,K25,K26,K27,K2D,K2E, NO,K2A,   NO,K4A,K4B,  K53,K54,K55, NO, \
     K2B,K14,K1A,K08,K15,K17,K1C,K18,K0C,K12,K13,K2F,K30,     NO,  K4C,K4D,K4E,  K5F,K60,K61,K57, \
@@ -82,10 +82,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * NOTE: The first 6 rows in the last column aren't in the original keyboard matrix - they are the
  * result of mapping the "security" key.
+ * unimap_trans[0][13] is also an extension and is used to signal "security key" removal
+ * (usually mapped to a modifier).
  */
 #define NO UNIMAP_NO
 const uint8_t PROGMEM unimap_trans[MATRIX_ROWS][MATRIX_COLS] = {
-    {0x02, 0x01, 0x48, 0x45, 0x46, 0x44, 0x40, 0x43, 0x3C, 0x29, 0x3D, 0x42, 0x3E,   NO, 0x3A, 0x6E},
+    {0x02, 0x01, 0x48, 0x45, 0x46, 0x44, 0x40, 0x43, 0x3C, 0x29, 0x3D, 0x42, 0x3E, 0x6D, 0x3A, 0x6E},
     {  NO,   NO,   NO, 0x51, 0x47, 0x34, 0x10, 0x38, 0x06,   NO, 0x05, 0x37, 0x11,   NO, 0x1B, 0x6F},
     {0x61, 0x60, 0x5F, 0x2E, 0x4B, 0x2D, 0x23, 0x12, 0x1F, 0x2B, 0x17, 0x25, 0x22, 0x57, 0x1E, 0x70},
     {0x5B, 0x5A, 0x59, 0x4D, 0x52, 0x30, 0x0D, 0x33, 0x07, 0x64, 0x09, 0x0E, 0x0B, 0x58, 0x14, 0x71},

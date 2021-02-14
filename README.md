@@ -12,7 +12,10 @@ while supporting most of its original features and many new features:
 * Full N Key Rollover.
   The original firmware supported only 3-Key Rollover.
 * The security key ("Bediensicherungsbaugruppe") is exposed as a key
-  between F19 and F24.
+  between F18 and F24 (in the Unimap framework).
+  Inserting it will generate a keypress of F19-F24, depending on the "security key"
+  actually used. When removing it, F18 is additionally pressed which is mapped
+  to RCTRL but can be remapped using the Keymap editor as necessary.
 * Supports the [Unimap keymapping framework](https://github.com/tmk/tmk_keyboard/blob/master/tmk_core/doc/unimap.txt)
   which eases adapting the keyboard layout and allows you to edit the keymap without
   recompilation using the online [Keymap editor](http://www.tmk-kbd.com/tmk_keyboard/editor/unimap/).
@@ -115,6 +118,8 @@ These wires connect to the Teensy in the following order: __FIXME__
 Desolder the buzzer's 390R resistor and connect the side *facing away* from it
 to a jumper cable.
 It will connect to pin __FIXME__ of the Teensy.
+
+Desolder the IFFS cable.
 
 Connect the VCC, GND and the control pin of the relay using jumper cables with
 the Teensy.
