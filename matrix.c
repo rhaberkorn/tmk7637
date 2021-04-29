@@ -63,8 +63,8 @@ void matrix_init(void)
     init_pins();
 
     /* initialize matrix state: all keys off */
-    memset(matrix, sizeof(matrix), 0);
-    memset(matrix_debouncing, sizeof(matrix_debouncing), 0);
+    memset(matrix, 0, sizeof(matrix));
+    memset(matrix_debouncing, 0, sizeof(matrix_debouncing));
 }
 
 /*
@@ -124,6 +124,11 @@ uint8_t matrix_scan(void)
          * key event delivery.
          * When using the buzzer, a short 50ms beep is played every time
          * a new key is pressed.
+         *
+         * FIXME: The Model F solenoids behaved differently.
+         * They retract automatically after a given "Extend time"
+         * (see Model F Technical Reference, p.182).
+         * We should experiment with both methods.
          */
         switch (keyclick_mode) {
             case KEYCLICK_SOLENOID:

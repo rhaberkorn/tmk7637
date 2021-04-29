@@ -154,6 +154,11 @@ the Reset button on the Teensy 2.0++.
 Once a firmware is running, you can also activate the Teensy Halfkay
 bootloader by pressing LSHIFT+LCTRL+RALT+Pause (LSHIFT+ET1+ET2+PF11 on the K7637.50 layout).
 
+If you would like to flash a firmware with a nonstandard filename, you
+may invoke something like:
+
+    teensy_loader_cli -mmcu=at90usb1286 -w -v k7637_custom_filename.hex
+
 See also: https://github.com/tmk/tmk_keyboard/blob/master/tmk_core/doc/build.md
 
 ## Keymap
