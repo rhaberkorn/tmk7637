@@ -74,7 +74,7 @@ to cut their power pins (see the pointers to the VCC pins):
 ![Pins to neutralize](pics/neutralize1.jpg) ![Pins to neutralize](pics/neutralize2.jpg)
 
 Now, solder pin headers at least to the following pins on the backside of the
-[Teensy 2.0++](docs/teensy 2.0++ pinout.pdf):
+[Teensy 2.0++](docs/teensy_2.0++_pinout.pdf):
 F0-7, E7, B0-2, C0-7, E0-1, D7.
 
 You should also solder pin headers to the following pins of the Teensy's top:
