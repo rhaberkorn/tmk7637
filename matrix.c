@@ -54,8 +54,9 @@ static bool read_row(uint8_t row);
 
 void matrix_init(void)
 {
-    debug_enable = true;
-    debug_matrix = true;
+    /* Can still be activated with LSHIFT+ET1+ET2+D and LSHIFT+ET1+ET2+X */
+    //debug_enable = true;
+    //debug_matrix = true;
 
     /* this also configures all LED pins and brings them into defined states */
     led_set(host_keyboard_leds());
