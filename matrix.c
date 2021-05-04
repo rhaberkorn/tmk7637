@@ -115,41 +115,35 @@ uint8_t matrix_scan(void)
         /*
          * Trigger keyclick whenever the keyboard matrix has actually
          * changed (ie. `debouncing_time` was set).
-         * When using the solenoid, the keyclick is supposed to immitate a
-         * mechanical click, so there should be one sound when pressing down
-         * the key and another when releasing it.
-         * If a key is already pressed (ie. you press an additional key),
-         * we release the solenoid for 50ms.
-         * We consciously do not _delay_ms(50) here since that would delay
-         * key event delivery.
-         * When using the buzzer, a short 50ms beep is played every time
-         * a new key is pressed.
          *
-         * FIXME: The Model F solenoids behaved differently.
-         * They retract automatically after a given "Extend time"
-         * (see Model F Technical Reference, p.182).
-         * We should experiment with both methods.
+         * When using the solenoid, it is activated and deactivated after
+         * KEYCLICK_SOLENOID_EXTENDTIME.
+         * I tried to test a different solenoid mode - where the solenoid is
+         * active as long as the key is pressed - but this is not how IBM
+         * Beamspring solenoids worked (see Model F Technical Reference, p.182)
+         * and it would also draw too much power.
+         *
+         * When using the buzzer, a short KEYCLICK_BUZZER_TIME beep is played
+         * every time a new key is pressed.
+         *
+         * We consciously do not _delay_ms() here since that would delay
+         * key event delivery.
          */
-        switch (keyclick_mode) {
-            case KEYCLICK_SOLENOID:
-                if (matrix_debouncing_pressed_keys > 1 ||
-                    (matrix_debouncing_pressed_keys == 1 && matrix_pressed_keys > 1)) {
-                    keyclick_solenoid_set(false);
-                    keyclick_time = timer_read();
-                } else {
-                    keyclick_solenoid_set(matrix_debouncing_pressed_keys);
-                }
-                break;
+        if (matrix_debouncing_pressed_keys > matrix_pressed_keys) {
+            switch (keyclick_mode) {
+                case KEYCLICK_SOLENOID:
+                    keyclick_solenoid_set(true);
+                    break;
 
-            case KEYCLICK_BUZZER:
-                if (matrix_debouncing_pressed_keys > matrix_pressed_keys) {
+                case KEYCLICK_BUZZER:
                     pwm_pd0_set_tone(550);
-                    keyclick_time = timer_read();
-                }
-                break;
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
+
+            keyclick_time = timer_read();
         }
 
         memcpy(matrix, matrix_debouncing, sizeof(matrix));
@@ -214,29 +208,30 @@ uint8_t matrix_scan(void)
 
     /*
      * This is responsible for performing a delayed action depending
-     * on the keyclick mode (see abovc).
-     * For solenoids, it reactivates them since they should be on and
-     * are released when the last key is released.
-     * When using the buzzer, this is responsible for turning it off
-     * after a short while.
+     * on the keyclick mode (see above).
+     * Both the solenoid and buzzer are turned off after a short while.
      * Polling here makes sure we do not delay any key delivery.
      */
-    if (keyclick_time && timer_elapsed(keyclick_time) >= 50) {
+    if (keyclick_time) {
         switch (keyclick_mode) {
             case KEYCLICK_SOLENOID:
-                keyclick_solenoid_set(true);
+                if (timer_elapsed(keyclick_time) < KEYCLICK_SOLENOID_EXTENDTIME)
+                    break;
+                keyclick_solenoid_set(false);
+                keyclick_time = 0;
                 break;
 
             case KEYCLICK_BUZZER:
-                if (!(host_keyboard_leds() & (1 << USB_LED_KANA)))
-                    pwm_pd0_set_tone(0);
+                if (timer_elapsed(keyclick_time) < KEYCLICK_BUZZER_TIME ||
+                    (host_keyboard_leds() & (1 << USB_LED_KANA)))
+                    break;
+                pwm_pd0_set_tone(0);
+                keyclick_time = 0;
                 break;
 
             default:
                 break;
         }
-
-        keyclick_time = 0;
     }
 
     return 1;

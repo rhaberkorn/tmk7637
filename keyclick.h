@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <avr/io.h>
 
+#define KEYCLICK_SOLENOID_EXTENDTIME 15 /* ms */
+#define KEYCLICK_BUZZER_TIME 50 /* ms */
+
 enum keyclick_mode {
     KEYCLICK_OFF = 0,
     KEYCLICK_SOLENOID,
