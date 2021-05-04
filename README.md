@@ -113,11 +113,21 @@ Now, solder wires *on the backside* of the PCBs to the following pins of the for
 
 ![8212](docs/8212.jpg)
 
-These wires connect to the Teensy in the following order: __FIXME__
+These wires connect to the Teensy in the following order:
+
+8212 Pin | Teensy Pin
+-------- | ----------
+4        | PB5
+6        | PD1
+8        | PB7
+10       | PB4
+15       | PB6
+17       | PD2
+21       | PD3
 
 Desolder the buzzer's 390R resistor and connect the side *facing away* from it
 to a jumper cable.
-It will connect to pin __FIXME__ of the Teensy.
+It will connect to pin PD0 of the Teensy.
 
 Desolder the IFFS cable.
 

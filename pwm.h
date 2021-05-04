@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdint.h>
 
-void pwm_pd0_set_led(uint8_t brightness);
 void pwm_pd1_set_led(uint8_t brightness);
 void pwm_pb4_set_led(uint8_t brightness);
 void pwm_pb5_set_led(uint8_t brightness);
@@ -29,6 +28,6 @@ void pwm_pb7_set_led(uint8_t brightness);
 
 void pwm_set_led(uint8_t led, uint8_t brightness);
 
-void pwm_pb5_set_tone(uint16_t freq);
+void pwm_pd0_set_tone(uint16_t freq);
 
 #endif

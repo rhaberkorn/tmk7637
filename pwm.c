@@ -97,47 +97,6 @@ static const uint16_t pwm_table16[256] PROGMEM = {
 };
 
 /**
- * Configure a PWM pin of Timer 0 (8-bit resolution).
- *
- * @note Timer 0 is used by tmk's timer module as well.
- * You can therefore only temporarilly PWM-modulate using timer 0
- * (ie. NOT during matrix scanning), cannot use any timer module functions
- * and should call timer_init() afterwards.
- * This can be easily resolved by using pwm_pb5_set_led() for one of the LEDs
- * and redistribute all the LED.
- * The buzzer can then use the no longer used PD0 since it's manually
- * IRQ-triggered anyway.
- *
- * @param channel Channel to initialize.
- *     0 (OC0A/PB7), 1 (OC0B/PD0)
- */
-static void pwm_timer0_init(uint8_t channel)
-{
-    /* Fast PWM on OC0x, inverted duty cycle, TOP = 0xFF */
-    TCCR0A |= (0b11 << (3-channel)*2) | 0b11;
-    /* no prescaling */
-    TCCR0B = 0b00000001;
-}
-
-void pwm_pd0_set_led(uint8_t brightness)
-{
-    switch (brightness) {
-        case 0:
-            TCCR0A &= ~0b00110000;
-            PORTD |= (1 << PD0);
-            break;
-        case 255:
-            TCCR0A &= ~0b00110000;
-            PORTD &= ~(1 << PD0);
-            break;
-        default:
-            pwm_timer0_init(1);
-            OCR0B = pgm_read_byte(&pwm_table8[brightness]);
-            break;
-    }
-}
-
-/**
  * Configure a PWM pin of Timer 1 (16-bit resolution).
  *
  * @param channel Channel to initialize.
@@ -262,24 +221,22 @@ void pwm_pd1_set_led(uint8_t brightness)
 /**
  * Set a LED by position in the first row.
  *
- * @bug The pins used should be rescrambled after we freed PD0.
- *
  * @param led LED to set (0-4).
  * @param brightness Brightness level to set.
  */
 void pwm_set_led(uint8_t led, uint8_t brightness)
 {
      switch (led) {
-         case 0: pwm_pd0_set_led(brightness); break;
-         case 1: pwm_pb7_set_led(brightness); break;
-         case 2: pwm_pd1_set_led(brightness); break;
-         case 3: pwm_pb6_set_led(brightness); break;
-         case 4: pwm_pb4_set_led(brightness); break;
+         case 0: pwm_pb5_set_led(brightness); break;
+         case 1: pwm_pd1_set_led(brightness); break;
+         case 2: pwm_pb7_set_led(brightness); break;
+         case 3: pwm_pb4_set_led(brightness); break;
+         case 4: pwm_pb6_set_led(brightness); break;
      }
 }
 
 /**
- * Play a tone on PB5 (the buzzer).
+ * Play a tone on PD0 (the buzzer).
  *
  * @note This uses timer 3 with an IRQ, even though we cannot
  * use one of the Timer 3 PWM pins -- they are required for matrix
@@ -305,7 +262,7 @@ void pwm_set_led(uint8_t led, uint8_t brightness)
  *
  * @param freq Frequency to play. If 0, disables the buzzer.
  */
-void pwm_pb5_set_tone(uint16_t freq)
+void pwm_pd0_set_tone(uint16_t freq)
 {
     if (!freq) {
         /*
@@ -343,5 +300,5 @@ void pwm_pb5_set_tone(uint16_t freq)
 
 ISR(TIMER3_COMPA_vect, ISR_NOBLOCK)
 {
-    PORTB ^= (1 << PB5);
+    PORTD ^= (1 << PD0);
 }

@@ -143,7 +143,7 @@ uint8_t matrix_scan(void)
 
             case KEYCLICK_BUZZER:
                 if (matrix_debouncing_pressed_keys > matrix_pressed_keys) {
-                    pwm_pb5_set_tone(550);
+                    pwm_pd0_set_tone(550);
                     keyclick_time = timer_read();
                 }
                 break;
@@ -229,7 +229,7 @@ uint8_t matrix_scan(void)
 
             case KEYCLICK_BUZZER:
                 if (!(host_keyboard_leds() & (1 << USB_LED_KANA)))
-                    pwm_pb5_set_tone(0);
+                    pwm_pd0_set_tone(0);
                 break;
 
             default:

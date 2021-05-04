@@ -38,7 +38,7 @@ bool command_extra(uint8_t code)
             dprintf("new keyclick mode: %u\n", keyclick_mode);
             /* FIXME: Perhaps do this in matrix_scan() */
             keyclick_solenoid_set(false);
-            pwm_pb5_set_tone(0);
+            pwm_pd0_set_tone(0);
             /* update the keyclick mode LED */
             led_set(host_keyboard_leds());
             return true;

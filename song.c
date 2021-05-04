@@ -193,11 +193,13 @@ void song_play_ruinen(void)
 {
     /* could be activated due to keyclick mode */
     keyclick_solenoid_set(false);
-    pwm_pb5_set_tone(0);
+    pwm_pd0_set_tone(0);
 
     uint8_t i = 0;
     for (long unsigned int cur_note = 0; cur_note < sizeof(song_ruinen)/sizeof(song_ruinen[0]); cur_note++) {
-        pwm_pb5_set_tone(pgm_read_word(&song_ruinen[cur_note].freq));
+        uint16_t cur_note_time = timer_read();
+
+        pwm_pd0_set_tone(pgm_read_word(&song_ruinen[cur_note].freq));
 
         uint8_t max_brightness = ((uint32_t)pgm_read_word(&song_ruinen[cur_note].freq)*255)/600;
         uint16_t fade_dur = pgm_read_word(&song_ruinen[cur_note].dur)/2/(max_brightness+1);
@@ -206,14 +208,6 @@ void song_play_ruinen(void)
             delay_long(fade_dur);
         }
 
-        /*
-         * The fade duration is probably not very precise, so compensate for it.
-         *
-         * FIXME: Once timer 0 is freed, we should use timer_read() and timer_elapsed()
-         * which will be more precise.
-         */
-        delay_long(pgm_read_word(&song_ruinen[cur_note].dur) - fade_dur*(max_brightness+1)*2);
-
         for (int16_t brightness = max_brightness; brightness >= 0; brightness--) {
             pwm_set_led(i % 5, brightness);
             delay_long(fade_dur);
@@ -221,12 +215,14 @@ void song_play_ruinen(void)
 
         if (pgm_read_word(&song_ruinen[cur_note].freq))
             i++;
+
+        /* The fade duration is probably not very precise, so compensate for it. */
+        uint16_t elapsed = timer_elapsed(cur_note_time);
+        if (elapsed < pgm_read_word(&song_ruinen[cur_note].dur))
+            delay_long(pgm_read_word(&song_ruinen[cur_note].dur) - elapsed);
     }
 
-    pwm_pb5_set_tone(0);
-
-    /* we screwed up timer 0 settings and they are also used by the timer module */
-    timer_init();
+    pwm_pd0_set_tone(0);
 
     /* restore the previous lock lights */
     led_set(host_keyboard_leds());
@@ -414,7 +410,7 @@ void song_play_kitt(void)
 {
     /* could be activated due to keyclick mode */
     keyclick_solenoid_set(false);
-    pwm_pb5_set_tone(0);
+    pwm_pd0_set_tone(0);
 
     int16_t i;
 
@@ -423,37 +419,28 @@ void song_play_kitt(void)
         song_larsen_light(i);
 
     long unsigned int cur_note = 0;
-    uint16_t cur_note_dur = 0;
+    uint16_t cur_note_time = timer_read();
 
     int8_t dir = 1;
     for (i = 0; cur_note < sizeof(song_knight_rider)/sizeof(song_knight_rider[0]); i += dir) {
-        /*
-         * FIXME: Once we freed up timer 0 by rearranging the LED pins,
-         * it might be more precise to use timer_read()/timer_elapsed() to wait for the next note.
-         */
-        if (cur_note_dur < LARSEN_CURVE_STEP) {
-            cur_note_dur = pgm_read_word(&song_knight_rider[cur_note].dur);
-            pwm_pb5_set_tone(pgm_read_word(&song_knight_rider[cur_note].freq));
-        }
+        pwm_pd0_set_tone(pgm_read_word(&song_knight_rider[cur_note].freq));
 
         song_larsen_light(i);
 
-        cur_note_dur -= LARSEN_CURVE_STEP;
-        if (cur_note_dur < LARSEN_CURVE_STEP)
-            cur_note++;
-
         if (i == sizeof(song_larsen_curve)-1 || (dir < 0 && i == 0))
             dir *= -1;
+
+        if (timer_elapsed(cur_note_time) >= pgm_read_word(&song_knight_rider[cur_note].dur)) {
+            cur_note_time = timer_read();
+            cur_note++;
+        }
     }
 
-    pwm_pb5_set_tone(0);
+    pwm_pd0_set_tone(0);
 
     /* fade out larsen light */
     while (i < sizeof(song_larsen_curve)*3/2)
         song_larsen_light(i++);
-
-    /* we screwed up timer 0 settings and they are also used by the timer module */
-    timer_init();
 
     /* restore the previous lock lights */
     led_set(host_keyboard_leds());
