@@ -69,20 +69,20 @@ Using pliers, you should be able to pull them off.
 At least for the UB 880 D, all pin holes should be free of solder.
 
 Secondly, you should "neutralize" the following chips - it is sufficient
-to cut their power pins:
+to cut their power pins (see the pointers to the VCC pins):
 
-* The EPROM.
-* __FIXME__
+![Pins to neutralize](pics/neutralize1.jpg) ![Pins to neutralize](pics/neutralize2.jpg)
 
 Now, solder pin headers at least to the following pins on the backside of the
-Teensy 2.0++:
-__FIXME__
+[Teensy 2.0++](docs/teensy 2.0++ pinout.pdf):
+F0-7, E7, B0-2, C0-7, E0-1, D7.
 
 You should also solder pin headers to the following pins of the Teensy's top:
-__FIXME__
+B3-6, D0-3, B7.
+At the bottom - near the reset switch - solder pin headers to VCC, GND and RST.
 
 Solder breadboard wires to the following pins of the Teensy:
-GND (near the USB connector), VCC, E4, E5
+GND (near the USB connector), VCC, E4, E5.
 
 Now, solder the wire from GND into pin 29 of the former UB 880 D,
 the wire from VCC should be soldered to pin 11, the cable from E4 should go
@@ -117,23 +117,23 @@ These wires connect to the Teensy in the following order:
 
 8212 Pin | Teensy Pin
 -------- | ----------
-4        | PB5
-6        | PD1
-8        | PB7
-10       | PB4
-15       | PB6
-17       | PD2
-21       | PD3
+4        | B5
+6        | D1
+8        | B7
+10       | B4
+15       | B6
+17       | D2
+21       | D3
 
 Desolder the buzzer's 390R resistor and connect the side *facing away* from it
 to a jumper cable.
-It will connect to pin PD0 of the Teensy.
+It will connect to pin D0 of the Teensy.
 
 Desolder the IFFS cable.
 
 Connect the VCC, GND and the control pin of the relay using jumper cables with
 the Teensy.
-The control pin should be connected to PB3 of the Teensy.
+The control pin should be connected to B3 of the Teensy.
 
 __FIXME__: How to connect the solenoid.
 
