@@ -163,7 +163,7 @@ out to be impractical.
 It apparently draws too much power which will result in MCU crashes.
 Perhaps this might work when using an externally powered USB hub.
 You can however attach a bare relay breakout board (without solenoid)
-to get some clicky feedback - but it's nowhere as load as even a small
+to get some clicky feedback - but it's nowhere as loud as even a small
 dedicated solenoid.
 Some of these breakout boards are LOW-active, so you might have to
 tweak the code and invert the use of PB3 (solenoid trigger).
