@@ -293,10 +293,10 @@ static void init_pins(void)
     PORTF &= ~0b00001000;
 
     /*
-     * Solenoid (ie. relay). It's LOW-active.
+     * Solenoid
      */
     DDRB  |= (1 << PB3);
-    PORTB |= (1 << PB3);
+    PORTB &= ~(1 << PB3);
 }
 
 static void select_col(uint8_t col)

@@ -38,13 +38,10 @@ extern enum keyclick_mode keyclick_mode;
 static inline void
 keyclick_solenoid_set(bool state)
 {
-	/*
-	 * NOTE: The solenoid/relay is LOW-active.
-	 */
 	if (state)
-	        PORTB &= ~(1 << PB3);
-	else
 		PORTB |= (1 << PB3);
+	else
+	        PORTB &= ~(1 << PB3);
 }
 
 #endif
